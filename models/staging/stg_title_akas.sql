@@ -1,12 +1,10 @@
 select
-titleId as title_id,
-cast(ordering as integer) as ordering,
-title,
-region,
-language,
-types as types_raw,
-attributes as attributes_raw,
-cast(isOriginalTitle as boolean) as is_original_title
-
-
+    NULLIF(titleId, '\N') as title_id,
+    NULLIF(ordering, '\N')::INT as ordering,
+    NULLIF(title, '\N') as title,
+    NULLIF(region, '\N') as region,
+    NULLIF(language, '\N') as language,
+    NULLIF(types, '\N') as types_raw,
+    NULLIF(attributes, '\N') as attributes_raw,
+    NULLIF(isOriginalTitle, '\N')::INT::BOOLEAN as is_original_title
 from {{source('imdb_raw','title_akas')}}

@@ -8,7 +8,7 @@ titles as (
 
 final as (
     select r.title_id,
-    cast(t.start_year as integer) as year_id,
+    t.start_year as year_id,
     r.average_rating,
     r.num_votes
     from ratings r
