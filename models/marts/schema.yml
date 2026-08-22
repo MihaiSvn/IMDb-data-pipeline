@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: dim_person
+    description: "Person dimension (actors, directors, etc.)"
+    columns:
+      - name: name_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_genre
+    description: "Genre dimension"
+    columns:
+      - name: genre_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_year
+    description: "Year dimension"
+    columns:
+      - name: year_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: year_value
+        description: "Actual year value"
+        tests:
+          - not_in_future:
+              config:
+                severity: warn
+
+
+  - name: fct_title_ratings
+    description: "Fact table linking ratings to the other dimensions"
+    columns:
+      - name: title_id
+        description: "Primary / Foreign key"
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: ref('dim_title_snapshot')
+              field: title_id
+      - name: average_rating
+        description: "Average rating score"
+        tests:
+          - valid_rating_range
+      - name: year_id
+        description: "Foreign key to the year dimension"
+        tests:
+          - relationships:
+              to: ref('dim_year')
+              field: year_id
