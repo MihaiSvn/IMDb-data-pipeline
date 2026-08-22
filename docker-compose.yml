@@ -1,3 +1,5 @@
+# IMDb Pipeline: Airflow + DuckDB + dbt (Fixed Volumes for Cosmos)
+
 x-airflow-common: &airflow-common
   image: apache/airflow:2.11.2
   environment: &airflow-common-env
@@ -6,6 +8,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: 120
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     AIRFLOW__WEBSERVER__BASE_URL: http://localhost:${AIRFLOW_WEBSERVER_HOST_PORT:-8083}
@@ -17,7 +20,12 @@ x-airflow-common: &airflow-common
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./scripts:/opt/airflow/scripts
-    - ./:/opt/airflow/dbt
+    - ./models:/opt/airflow/dbt/models
+    - ./macros:/opt/airflow/dbt/macros
+    - ./snapshots:/opt/airflow/dbt/snapshots
+    - ./seeds:/opt/airflow/dbt/seeds
+    - ./dbt_project.yml:/opt/airflow/dbt/dbt_project.yml
+    - ./profiles.yml:/opt/airflow/dbt/profiles.yml
     - ./data:/opt/airflow/data
     - ./warehouse:/opt/airflow/warehouse
     - ./logs:/opt/airflow/logs
