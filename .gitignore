@@ -24,3 +24,5 @@ Thumbs.db
 
 *.duckdb
 *.duckdb.wal
+
+dbt_packages/

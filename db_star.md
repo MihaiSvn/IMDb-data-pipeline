@@ -8,18 +8,18 @@ This document describes the optimized database structure (Star Schema) designed 
 erDiagram
     %% FACT TABLE
     fct_title_ratings {
-        string tconst PK "Unique Movie ID (Grain: 1 row/title)"
+        string title_id PK "Unique Movie ID (Grain: 1 row/title)"
         integer year_id FK "Key to dim_year"
-        float averageRating
-        integer numVotes
+        float average_rating
+        integer num_votes
     }
 
     %% DIMENSION TABLES
     dim_title_snapshot {
         string dbt_scd_id PK "SCD Type 2 Surrogate Key"
-        string tconst FK
-        string primaryTitle
-        integer runtimeMinutes
+        string title_id FK
+        string primary_title
+        integer runtime_minutes
         string genres "Raw text kept for history"
         timestamp dbt_valid_from "Valid from"
         timestamp dbt_valid_to "Valid to"
@@ -27,9 +27,9 @@ erDiagram
     }
 
     dim_person {
-        string nconst PK
-        string primaryName
-        string birthYear
+        string name_id PK
+        string primary_name
+        string birth_year
     }
 
     dim_genre {
@@ -44,18 +44,18 @@ erDiagram
 
     %% BRIDGE TABLES
     bridge_title_genres {
-        string tconst PK, FK
+        string title_id PK, FK
         integer genre_id PK, FK
     }
 
     bridge_title_crew {
-        string tconst PK, FK
-        string nconst PK, FK
+        string title_id PK, FK
+        string name_id PK, FK
         string role PK "director / writer / actor"
     }
 
     %% RELATIONSHIPS (Star Links)
-    fct_title_ratings ||--o{ dim_title_snapshot : "tracks history via tconst"
+    fct_title_ratings ||--o{ dim_title_snapshot : "tracks history via title_id"
     fct_title_ratings }o--|| dim_year : "released in (year_id)"
 
     %% Many-to-Many Relationships resolved via Bridge
