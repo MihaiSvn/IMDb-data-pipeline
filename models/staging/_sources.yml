@@ -1,31 +1,13 @@
+version: 2
+
 sources:
   - name: imdb_raw
+    schema: bronze
     tables:
       - name: title_basics
-        meta:
-          # separator tab, are header, imdb pune null ca \N, quote fiindca apar filme cu " " in ele si ar da eroare
-          external_location: "read_csv('data/title.basics.tsv.gz', sep='\t', header=True, nullstr='\\N', quote='')"
-
       - name: title_akas
-        meta:
-          external_location: "read_csv('data/title.akas.tsv.gz', sep='\t', header=True, nullstr='\\N', quote='')"
-
       - name: title_crew
-        meta:
-          external_location: "read_csv('data/title.crew.tsv.gz', sep='\t', header=True, nullstr='\\N', quote='')"
-
       - name: title_principals
-        meta:
-          external_location: "read_csv('data/title.principals.tsv.gz', sep='\t', header=True, nullstr='\\N', quote='')"
-
       - name: title_ratings
-        meta:
-          external_location: "read_csv('data/title.ratings.tsv.gz', sep='\t', header=True, nullstr='\\N', quote='')"
-
       - name: title_episode
-        meta:
-          external_location: "read_csv('data/title.episode.tsv.gz', sep='\t', header=True, nullstr='\\N', quote='')"
-
       - name: name_basics
-        meta:
-          external_location: "read_csv('data/name.basics.tsv.gz', sep='\t', header=True, nullstr='\\N', quote='')"

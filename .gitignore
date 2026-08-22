@@ -5,6 +5,7 @@ logs/
 **/data/*.tsv
 **/data/*.csv
 **/data/*.zip
+*.parquet
 
 venv/
 .venv/
@@ -26,3 +27,7 @@ Thumbs.db
 *.duckdb.wal
 
 dbt_packages/
+
+.env
+*.user.yml
+*.user

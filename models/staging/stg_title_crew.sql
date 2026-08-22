@@ -1,6 +1,5 @@
 select
-    tconst as title_id,
-    directors as directors_raw,
-    writers as writers_raw
-
+    NULLIF(tconst, '\N') as title_id,
+    NULLIF(directors, '\N') as directors_raw,
+    NULLIF(writers, '\N') as writers_raw
 from {{source('imdb_raw','title_crew')}}
