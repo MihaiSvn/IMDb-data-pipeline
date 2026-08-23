@@ -107,5 +107,5 @@ with DAG(
 
     finish = EmptyOperator(task_id="finish")
 
-    # Ordinea logică completă
+    # Logical order
     start >> load >> validate >> dbt_run_staging >> dbt_run_intermediate >> dbt_snapshot >> dbt_run_marts >> dbt_test >> finish
