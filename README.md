@@ -22,6 +22,7 @@ An end-to-end data pipeline that extracts raw IMDb datasets, loads them into a l
 ├── dbt_packages/               # External dbt packages
 ├── logs/                       # Airflow and pipeline execution logs
 ├── macros/                     # dbt macros for custom SQL functions (e.g., get_decade.sql)
+    └── tests/                  # macros for tests
 ├── models/                     # dbt SQL transformation models
 │   ├── staging/                # Layer 1: Cleans and casts raw data views
 │   ├── intermediate/           # Layer 2: Joins and prepares business logic
