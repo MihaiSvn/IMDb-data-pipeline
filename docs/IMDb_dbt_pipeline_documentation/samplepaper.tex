@@ -8,8 +8,8 @@
 
 \title{IMDb Data Engineering Pipeline}
 
-\author{Savin Mihai-Alexandru\inst{1}}
-\institute{Faculty of Computer Science, "Alexandru Ioan Cuza" University of Ia\textcommabelow{s}i}
+\author{Savin Mihai-Alexandru \\ \vspace{0.1cm} \normalsize{August 24, 2026}}
+\institute{}
 
 \maketitle
 
@@ -17,26 +17,26 @@
 This project implements an automated, end-to-end data engineering pipeline that extracts raw IMDb datasets, loads them into a DuckDB data warehouse, and transforms them into a query-ready star schema using dbt. Orchestrated by Apache Airflow, the pipeline ultimately answers complex analytical questions regarding top-rated directors, movie runtime evolution, and the ratio of hidden gems to overrated titles within various cinematic genres.
 
 \section{Dataset Description}
-The primary data source consists of bulk exports from the official IMDb website, accessible via \url{datasets.imdbws.com}. 
+The primary data source consists of bulk exports from the official IMDb website, accessible via \url{datasets.imdbws.com}.
 
 \begin{itemize}
-    \item \textbf{Source, Size, and Frequency:} The dataset contains millions of rows distributed across seven large, compressed TSV files, which IMDb updates on a daily basis. 
+    \item \textbf{Source, Size, and Frequency:} The dataset contains millions of rows distributed across seven large, compressed TSV files, which IMDb updates on a daily basis.
     \item \textbf{Scoping Decisions:} The extraction process retrieves all seven core files provided by the platform (\texttt{name.basics}, \texttt{title.akas}, \texttt{title.basics}, \texttt{title.crew}, \texttt{title.episode}, \texttt{title.principals}, and \texttt{title.ratings}) to ensure a complete foundation for the data warehouse before any targeted transformations occur.
 \end{itemize}
 
 \subsection{Raw Data Structure}
-Before being processed and cleaned in dbt, the original non-commercial dataset operates on a relational structure centered around two main pillars: \textbf{Productions} (identified by the \texttt{tconst} primary key) and \textbf{Persons} (identified by the \texttt{nconst} primary key). 
+Before being processed and cleaned in dbt, the original non-commercial dataset operates on a relational structure centered around two main pillars: \textbf{Productions} (identified by the \texttt{tconst} primary key) and \textbf{Persons} (identified by the \texttt{nconst} primary key).
 
-The Productions pillar includes tables such as \texttt{title.basics} (core movie and show metadata), \texttt{title.akas} (regional alternative titles), \texttt{title.ratings} (user scores and votes), and \texttt{title.episode} (TV series hierarchy). The Persons pillar is anchored by \texttt{name.basics}, which contains biographical data for actors, directors, and crew members. 
+The Productions pillar includes tables such as \texttt{title.basics} (core movie and show metadata), \texttt{title.akas} (regional alternative titles), \texttt{title.ratings} (user scores and votes), and \texttt{title.episode} (TV series hierarchy). The Persons pillar is anchored by \texttt{name.basics}, which contains biographical data for actors, directors, and crew members.
 
-These two domains are closely linked via intersection bridge tables, notably \texttt{title.crew} (providing preliminary director and writer lists) and \texttt{title.principals} (detailing the exact cast and crew billing, including character names). 
+These two domains are closely linked via intersection bridge tables, notably \texttt{title.crew} (providing preliminary director and writer lists) and \texttt{title.principals} (detailing the exact cast and crew billing, including character names).
 
 Figure \ref{fig:og_diagram} illustrates the Entity-Relationship Diagram of this raw dataset prior to its dimensional modeling.
 
 \begin{figure}[h!]
 \centering
 
-\includegraphics[width=0.9\textwidth]{og_diagram.png} 
+\includegraphics[width=0.9\textwidth]{og_diagram.png}
 \caption{Entity-Relationship Diagram of the raw IMDb dataset}
 \label{fig:og_diagram}
 \end{figure}
@@ -75,9 +75,9 @@ The project's architecture integrates three main technologies, operating on a sc
 To meet the analytical requirements of the project, the highly denormalized raw data was transformed into a robust star schema using dbt. This dimensional architecture optimizes query performance, resolves complex many-to-many relationships, and ensures accurate metric aggregations.
 
 \subsection{Fact Table and Grain}
-The core of the model is the \textbf{\texttt{fct\_title\_ratings}} table. 
+The core of the model is the \textbf{\texttt{fct\_title\_ratings}} table.
 \begin{itemize}
-    \item \textbf{Grain:} The grain is strictly defined as \textit{one row per title} (uniquely identified by \texttt{title\_id} / \texttt{tconst}). 
+    \item \textbf{Grain:} The grain is strictly defined as \textit{one row per title} (uniquely identified by \texttt{title\_id} / \texttt{tconst}).
     \item \textbf{Justification for Grain:} This explicit grain is critical because movie titles inherently have many-to-many relationships with both genres and industry personnel. If these relationships were flattened directly into the fact table, the row count would explode, leading to duplicated metrics and inaccurate statistical aggregations (e.g., counting a single movie's votes multiple times for every actor in it). The fact table isolates purely quantitative metrics: \texttt{average\_rating} and \texttt{num\_votes}.
 \end{itemize}
 
@@ -100,7 +100,7 @@ Figure \ref{fig:erd_star} illustrates the final Star Schema design, demonstratin
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.9\textwidth]{erd_star.png} 
+\includegraphics[width=0.9\textwidth]{erd_star.png}
 \caption{Entity-Relationship Diagram of the finalized IMDb Star Schema}
 \label{fig:erd_star}
 \end{figure}
@@ -131,7 +131,7 @@ The repository is organized to separate orchestration, ingestion, transformation
 
 \section{Airflow DAG Explanation}
 
-The pipeline is orchestrated by Apache Airflow via a Directed Acyclic Graph (DAG) named \texttt{imdb\_pipeline}. 
+The pipeline is orchestrated by Apache Airflow via a Directed Acyclic Graph (DAG) named \texttt{imdb\_pipeline}.
 
 \subsection{Schedule and Configuration}
 The DAG is configured to run on a \texttt{@daily} schedule, ensuring the data warehouse stays synchronized with IMDb's daily updates. To ensure fault tolerance and meet operational standards, the DAG configuration includes a default retry policy of one attempt (\texttt{retries: 1}) with a one-minute delay upon task failure.
@@ -142,7 +142,7 @@ The pipeline executes sequentially, strictly enforcing dependencies to ensure da
 \begin{figure}[h!]
 \centering
 
-\includegraphics[width=0.9\textwidth]{dag_graph_view.png} 
+\includegraphics[width=0.9\textwidth]{dag_graph_view.png}
 \caption{Airflow Graph View illustrating the sequential execution flow of the IMDb pipeline}
 \label{fig:dag_view}
 \end{figure}
@@ -179,18 +179,18 @@ The dbt lineage graph provides a visual representation of the data flow, illustr
 \subsection{Implemented Data Tests}
 
 \begin{itemize}
-    \item \textbf{Primary Key Tests (\texttt{unique} and \texttt{not\_null}):} Applied to the primary keys of all staging and mart tables (e.g., \texttt{title\_id} in \texttt{dim\_title\_snapshot} and \texttt{fct\_title\_ratings}). 
+    \item \textbf{Primary Key Tests (\texttt{unique} and \texttt{not\_null}):} Applied to the primary keys of all staging and mart tables (e.g., \texttt{title\_id} in \texttt{dim\_title\_snapshot} and \texttt{fct\_title\_ratings}).
     \\ \textit{Reason:} Ensures that no duplicate records exist and that foundational identifiers are never missing.
-    
+
     \item \textbf{Referential Integrity Tests (\texttt{relationships}):} Applied to the foreign keys in the fact and bridge tables, validating that every \texttt{title\_id}, \texttt{name\_id}, or \texttt{year\_id} explicitly exists in their respective dimension tables.
     \\ \textit{Reason:} Prevents orphaned records in the data warehouse and guarantees that analytical aggregations group correctly across dimensions.
-    
+
     \item \textbf{Domain Rule: Rating Range (Custom Test):} A custom SQL test applied to \texttt{average\_rating} in the fact table, ensuring values fall strictly between 0.0 and 10.0.
     \\ \textit{Reason:} Enforces raw business logic; IMDb ratings cannot mathematically exceed 10 or drop below 0. Values outside this range indicate data corruption.
-    
+
     \item \textbf{Domain Rule: Valid Release Year (Custom SQL):} A custom validation applied to the \texttt{dim\_year} / \texttt{startYear} logic ensuring the year is not set in the distant future.
     \\ \textit{Reason:} Prevents manual data entry typos in the source system from corrupting time-based historical analyses.
-    
+
     \item \textbf{Expected Failures / Warning Tests (\texttt{severity: warn}):} Applied to nullable descriptive fields, such as missing \texttt{runtimeMinutes} for obscure indie titles, or missing \texttt{genres}.
     \\ \textit{Reason:} Some titles in the raw dataset legitimately lack full metadata. Failing the pipeline on these rows would unnecessarily discard valid rating facts, so a warning is logged instead to maintain pipeline resilience.
 \end{itemize}
@@ -203,7 +203,7 @@ Before executing the pipeline, the raw datasets must be acquired:
 \begin{enumerate}
     \item Navigate to the official IMDb Datasets page (\url{https://datasets.imdbws.com/}).
     \item Download the following 7 compressed files (\texttt{.tsv.gz}): \texttt{name.basics}, \texttt{title.akas}, \texttt{title.basics}, \texttt{title.crew}, \texttt{title.episode}, \texttt{title.principals}, and \texttt{title.ratings}.
-    \item Place all downloaded files directly into the \texttt{data/} folder in the project root. 
+    \item Place all downloaded files directly into the \texttt{data/} folder in the project root.
 \end{enumerate}
 
 \subsection{Execution via Airflow (Docker)}
@@ -271,11 +271,11 @@ pip install duckdb pandas matplotlib seaborn
     \item \textbf{Handling IMDb's Custom Null Representations (\textbackslash N)} \\
     A significant data quality issue arose during the transformation phase due to IMDb's formatting choices. The raw TSV files use the literal string "\textbackslash N" to represent missing data. Attempting to cast numeric columns (such as \texttt{runtimeMinutes} or \texttt{startYear} to integer types) directly in DuckDB or dbt caused the pipeline to crash with type mismatch errors. \\
     \textbf{Resolution:} By wrapping the affected columns in a \texttt{NULLIF(column\_name, '\textbackslash N')} function before applying the \texttt{CAST()} operation, the pipeline safely converts these string literals into true SQL \texttt{NULL} values, preventing runtime failures.
-    
+
     \item \textbf{Data Skew and "Noise" in Analytical Aggregations} \\
     When initially calculating the top directors by average rating, the results were heavily skewed. Directors of obscure short films or highly-rated television anime episodes consistently ranked above established cinema directors due to the inherently different voting behaviors across media types. \\
     \textbf{Resolution:} I had to refine the business logic in the final analytical queries. By explicitly joining the \texttt{staging} metadata and enforcing a strict \texttt{title\_type = 'movie'} filter, the noise was successfully eliminated, yielding accurate insights.
-    
+
    \item \textbf{Challenge: Schema Inconsistencies During Parquet Migration} \\
     When migrating the orchestration to Airflow, the extraction architecture was simultaneously updated to convert the raw TSV files into Parquet format before loading them into DuckDB. Following this change, downstream dbt tasks (such as \texttt{dbt\_run\_staging} and \texttt{dbt\_snapshot}) began failing intermittently, as seen in the Airflow Grid View. These seemingly random crashes occurred because DuckDB infers schemas differently from Parquet files compared to raw TSV reads, exposing new type-casting inconsistencies that the initial dbt models were not prepared for. \\
     \textbf{Resolution:} The pipeline was stabilized by enforcing much stricter SQL \texttt{CAST} operations directly within the dbt \texttt{staging} layer. Instead of altering the ingestion script, the staging models were updated to rigorously cast and handle the inferred Parquet data types, ensuring all downstream models received a uniform and predictable schema.
