@@ -25,7 +25,7 @@ An end-to-end data pipeline that extracts raw IMDb datasets, loads them into a l
 │    └── tests/                 # macros for tests
 ├── models/                     # dbt SQL transformation models
 │   ├── staging/                # Layer 1: Cleans and casts raw data views
-│   ├── intermediate/           # Layer 2: Joins and prepares business logic
+│   ├── intermediate/           # Layer 2: Data reshaping (e.g., unnesting arrays and pivots)
 │   └── marts/                  # Layer 3: Dimensional modeling (Fact & Dimension tables)
 ├── scripts/                    # Python scripts
 │   ├── generate_charts.py      # Script for generating analytical charts via Python/Seaborn
@@ -85,6 +85,7 @@ If you want to test the pipeline directly in your local terminal without spinnin
    pip install -r airflow/requirements.txt
    # Or install visualization libraries if running the charts script:
    pip install duckdb pandas matplotlib seaborn
+   ```
 2. **Clean the slate:** Delete the `warehouse/imdb.duckdb` file for a fresh start.
 3. **Extract & Load:** Run the extraction script to build the Bronze layer:
    ```bash
